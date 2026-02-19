@@ -12,7 +12,11 @@ Shortlist is a brutally honest AI-powered job tracker that helps job seekers man
 ## Key Features
 - PDF resume upload with drag-and-drop (parsed by AI)
 - Job description evaluation with brutally honest hiring manager assessment
-- Master tracking table with status management
+- Job location extraction from postings
+- Visa/work authorization detection (CPT/OPT/STEM OPT, sponsorship status)
+- Job URL tracking (link to original posting)
+- Personal notes/comments per job
+- Master tracking table with status management and delete functionality
 - Follow-up alerts for applications > 14 days old
 - Dark/light mode toggle
 - User authentication (Google, GitHub, Apple, email/password)

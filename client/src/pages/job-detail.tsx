@@ -42,6 +42,8 @@ import {
   Save,
   StickyNote,
   Trash2,
+  MapPin,
+  Globe,
 } from "lucide-react";
 import type { Job } from "@shared/schema";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -234,29 +236,29 @@ export default function JobDetailPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card className="p-4">
           <div className="flex items-center gap-2 text-sm">
-            <Calendar className="w-4 h-4 text-muted-foreground" />
-            <div>
-              <p className="text-xs text-muted-foreground">Posted</p>
-              <p className="font-medium text-sm">{job.datePosted}</p>
+            <MapPin className="w-4 h-4 text-muted-foreground shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xs text-muted-foreground">Location</p>
+              <p className="font-medium text-sm" data-testid="text-job-location">{job.location}</p>
             </div>
           </div>
         </Card>
         <Card className="p-4">
           <div className="flex items-center gap-2 text-sm">
-            <Clock className="w-4 h-4 text-muted-foreground" />
-            <div>
-              <p className="text-xs text-muted-foreground">Deadline</p>
-              <p className="font-medium text-sm">{job.deadline}</p>
+            <Globe className="w-4 h-4 text-muted-foreground shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xs text-muted-foreground">Visa / Work Auth</p>
+              <p className="font-medium text-sm" data-testid="text-job-visa">{job.visaSponsorship}</p>
             </div>
           </div>
         </Card>
         <Card className="p-4">
           <div className="flex items-center gap-2 text-sm">
-            <Target className="w-4 h-4 text-muted-foreground" />
-            <div>
+            <Target className="w-4 h-4 text-muted-foreground shrink-0" />
+            <div className="min-w-0">
               <p className="text-xs text-muted-foreground">Status</p>
               <Select value={job.status} onValueChange={handleStatusChange}>
                 <SelectTrigger className="mt-0.5" data-testid="select-job-status">
@@ -271,6 +273,24 @@ export default function JobDetailPage() {
                   <SelectItem value="Rejected">Rejected</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+          </div>
+        </Card>
+        <Card className="p-4">
+          <div className="flex items-center gap-2 text-sm">
+            <Calendar className="w-4 h-4 text-muted-foreground shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xs text-muted-foreground">Posted</p>
+              <p className="font-medium text-sm">{job.datePosted}</p>
+            </div>
+          </div>
+        </Card>
+        <Card className="p-4">
+          <div className="flex items-center gap-2 text-sm">
+            <Clock className="w-4 h-4 text-muted-foreground shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xs text-muted-foreground">Deadline</p>
+              <p className="font-medium text-sm">{job.deadline}</p>
             </div>
           </div>
         </Card>

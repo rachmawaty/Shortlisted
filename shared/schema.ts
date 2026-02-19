@@ -35,6 +35,8 @@ export const jobs = pgTable("jobs", {
   applied: boolean("applied").notNull().default(false),
   appliedDate: text("applied_date"),
   status: text("status").notNull().default("Not Applied"),
+  location: text("location").notNull().default("Not disclosed"),
+  visaSponsorship: text("visa_sponsorship").notNull().default("Not disclosed"),
   rawDescription: text("raw_description").notNull(),
   jobUrl: text("job_url"),
   notes: text("notes"),

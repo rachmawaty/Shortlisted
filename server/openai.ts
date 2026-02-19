@@ -62,6 +62,8 @@ export async function evaluateJob(
   industry: string;
   datePosted: string;
   deadline: string;
+  location: string;
+  visaSponsorship: string;
   keyCapabilities: string[];
   matchingCapabilities: string[];
   fitLevel: string;
@@ -92,6 +94,8 @@ Return a JSON object with exactly these fields:
 - industry: string (industry of the company, or "Not disclosed" if unknown)
 - datePosted: string (date posted if mentioned, otherwise "Not disclosed")
 - deadline: string (application deadline if mentioned, otherwise "Not disclosed")
+- location: string (job location including city/state/country and remote/hybrid/onsite if mentioned, otherwise "Not disclosed")
+- visaSponsorship: string (one of the following based on what the job posting states about work authorization: "Visa sponsorship available" if they explicitly offer sponsorship, "CPT/OPT accepted" if they mention accepting CPT or OPT, "CPT/OPT/STEM OPT accepted" if they mention STEM OPT or OPT extension, "US work authorization required (no sponsorship)" if they require existing authorization and won't sponsor, "Not disclosed" if nothing is mentioned about visa/work authorization. If multiple apply, combine them like "Visa sponsorship available, CPT/OPT/STEM OPT accepted". Be precise - only state what the posting explicitly says.)
 - keyCapabilities: string[] (top 5 critical capabilities required)
 - matchingCapabilities: string[] (capabilities the candidate actually has from their resume)
 - fitLevel: string (exactly one of: "High", "Medium", "Low")
@@ -100,7 +104,7 @@ Return a JSON object with exactly these fields:
 - verdict: string (1-2 paragraph hiring manager assessment answering "Would I interview this candidate? Why or why not?")
 - recommendation: string (exactly one of: "Apply", "Apply only if referrals/networking exist", "Do not apply (low ROI)")
 
-Do NOT hallucinate dates. If information is not in the job description, mark it as "Not disclosed".
+Do NOT hallucinate dates or visa information. If information is not in the job description, mark it as "Not disclosed".
 Be specific about strengths and gaps - reference actual skills/experience from the resume.`,
       },
       {
@@ -120,6 +124,8 @@ Be specific about strengths and gaps - reference actual skills/experience from t
     industry: parsed.industry || "Not disclosed",
     datePosted: parsed.datePosted || "Not disclosed",
     deadline: parsed.deadline || "Not disclosed",
+    location: parsed.location || "Not disclosed",
+    visaSponsorship: parsed.visaSponsorship || "Not disclosed",
     keyCapabilities: parsed.keyCapabilities || [],
     matchingCapabilities: parsed.matchingCapabilities || [],
     fitLevel: parsed.fitLevel || "Medium",

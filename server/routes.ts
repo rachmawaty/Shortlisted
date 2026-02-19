@@ -142,6 +142,8 @@ export async function registerRoutes(
         industry: evaluation.industry,
         datePosted: evaluation.datePosted,
         deadline: evaluation.deadline,
+        location: evaluation.location,
+        visaSponsorship: evaluation.visaSponsorship,
         keyCapabilities: evaluation.keyCapabilities,
         matchingCapabilities: evaluation.matchingCapabilities,
         fitLevel: evaluation.fitLevel,

@@ -48,6 +48,7 @@ import {
   Bell,
   Trash2,
   ExternalLink,
+  MapPin,
 } from "lucide-react";
 import type { Job } from "@shared/schema";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -243,6 +244,7 @@ export default function Dashboard() {
                 <TableRow>
                   <TableHead className="min-w-[180px]">Job Title</TableHead>
                   <TableHead className="min-w-[120px]">Company</TableHead>
+                  <TableHead>Location</TableHead>
                   <TableHead>Fit</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Aging</TableHead>
@@ -276,6 +278,12 @@ export default function Dashboard() {
                         </div>
                       </TableCell>
                       <TableCell className="text-sm" data-testid={`text-job-company-${job.id}`}>{job.company}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                          <MapPin className="w-3.5 h-3.5 shrink-0" />
+                          <span className="truncate max-w-[140px]" data-testid={`text-job-location-${job.id}`}>{job.location}</span>
+                        </div>
+                      </TableCell>
                       <TableCell><FitBadge level={job.fitLevel} /></TableCell>
                       <TableCell>
                         <Select
