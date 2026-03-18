@@ -12,7 +12,7 @@ export async function parseResume(rawText: string): Promise<{
   tools: string[];
 }> {
   const response = await client.messages.create({
-    model: "claude-opus-4-6",
+    model: "claude-sonnet-4-6",
     max_tokens: 4096,
     system: `You are a resume parser. Extract structured information from the resume text provided.
 Return a JSON object with exactly these fields:
@@ -64,7 +64,7 @@ export async function evaluateJob(
   recommendation: string;
 }> {
   const response = await client.messages.create({
-    model: "claude-opus-4-6",
+    model: "claude-sonnet-4-6",
     max_tokens: 4096,
     system: `You are a brutally honest hiring manager and recruiter evaluating a job candidate's fit for a position.
 
