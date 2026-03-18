@@ -100,6 +100,9 @@ export function registerAuthRoutes(app: Express): void {
         .returning();
 
       req.session.userId = newUser.id;
+      await new Promise<void>((resolve, reject) =>
+        req.session.save((err) => (err ? reject(err) : resolve()))
+      );
 
       const { passwordHash: _ph, ...safeUser } = newUser;
       return res.status(201).json(safeUser);
@@ -136,6 +139,9 @@ export function registerAuthRoutes(app: Express): void {
       }
 
       req.session.userId = user.id;
+      await new Promise<void>((resolve, reject) =>
+        req.session.save((err) => (err ? reject(err) : resolve()))
+      );
 
       const { passwordHash: _ph, ...safeUser } = user;
       return res.json(safeUser);
