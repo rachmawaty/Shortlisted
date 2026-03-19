@@ -105,7 +105,7 @@ Return a JSON object with exactly these fields:
 - fitLevel: string (exactly one of: "High", "Medium", "Low")
 - strengths: string[] (bullet points tied directly to resume evidence)
 - gaps: string[] (missing skills, seniority mismatch, industry mismatch, tooling gaps)
-- verdict: string (1-2 paragraph hiring manager assessment answering "Would I interview this candidate? Why or why not?")
+- verdict: string (1-2 paragraph hiring manager assessment. MUST begin with exactly one of these opening sentences based on your assessment: "I would interview this candidate." / "I would not interview this candidate." / "I would consider interviewing this candidate only conditionally." — then follow with your reasoning.)
 - recommendation: string (exactly one of: "Apply", "Apply only if referrals/networking exist", "Do not apply (low ROI)")
 
 Do NOT hallucinate dates or visa information. If information is not in the job description, mark it as "Not disclosed".
