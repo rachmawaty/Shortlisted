@@ -13,6 +13,7 @@ import {
   Wrench,
   Building2,
   BarChart3,
+  GraduationCap,
   Loader2,
   RefreshCw,
   FileUp,
@@ -238,6 +239,29 @@ export default function ResumePage() {
                   ))}
                   {(!resume.experience || (resume.experience as any[]).length === 0) && (
                     <span className="text-xs text-muted-foreground">No experience parsed</span>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <GraduationCap className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Education</span>
+                </div>
+                <div className="space-y-3">
+                  {((resume.education as any[]) || []).map((edu: any, i: number) => (
+                    <div key={i} className="text-sm" data-testid={`text-education-${i}`}>
+                      <p className="font-medium">
+                        {edu.degree}{edu.field ? ` in ${edu.field}` : ""}
+                        {edu.inProgress && <Badge variant="outline" className="ml-2 text-xs">In Progress</Badge>}
+                      </p>
+                      <p className="text-muted-foreground">
+                        {edu.institution}{edu.graduationYear ? ` | ${edu.graduationYear}` : ""}
+                      </p>
+                    </div>
+                  ))}
+                  {(!(resume.education as any[]) || (resume.education as any[]).length === 0) && (
+                    <span className="text-xs text-muted-foreground">No education parsed</span>
                   )}
                 </div>
               </div>

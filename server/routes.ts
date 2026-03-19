@@ -65,6 +65,7 @@ export async function registerRoutes(
         seniorityLevel: parsed.seniorityLevel,
         industries: parsed.industries,
         tools: parsed.tools,
+        education: parsed.education,
       });
 
       res.json(resume);

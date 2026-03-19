@@ -14,6 +14,7 @@ export const resumes = pgTable("resumes", {
   seniorityLevel: text("seniority_level").notNull().default(""),
   industries: text("industries").array().notNull().default(sql`'{}'::text[]`),
   tools: text("tools").array().notNull().default(sql`'{}'::text[]`),
+  education: json("education").$type<{ degree: string; field: string; institution: string; graduationYear: string; inProgress: boolean }[]>().notNull().default(sql`'[]'::json`),
   createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 

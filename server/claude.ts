@@ -15,6 +15,7 @@ export async function parseResume(rawText: string): Promise<{
   seniorityLevel: string;
   industries: string[];
   tools: string[];
+  education: { degree: string; field: string; institution: string; graduationYear: string; inProgress: boolean }[];
 }> {
   const response = await client.messages.create({
     model: "claude-sonnet-4-6",
@@ -26,6 +27,12 @@ Return a JSON object with exactly these fields:
 - seniorityLevel: string (one of: "Entry Level", "Junior", "Mid-Level", "Senior", "Staff", "Principal", "Director", "VP", "C-Level")
 - industries: string[] (industries the candidate has worked in)
 - tools: string[] (specific tools, technologies, platforms, frameworks mentioned)
+- education: array of { degree: string, field: string, institution: string, graduationYear: string, inProgress: boolean }
+  - degree: e.g. "Bachelor of Science", "Master of Business Administration", "PhD"
+  - field: e.g. "Computer Science", "Business Administration"
+  - institution: university or school name
+  - graduationYear: e.g. "2020" or "2025 (expected)" — if currently enrolled and graduating soon, note it
+  - inProgress: true if the candidate is currently enrolled and has not yet graduated
 
 Be thorough but concise. Extract only what is explicitly stated.
 Return ONLY valid JSON, no markdown, no explanation.`,
@@ -40,6 +47,7 @@ Return ONLY valid JSON, no markdown, no explanation.`,
     seniorityLevel: parsed.seniorityLevel || "Not determined",
     industries: parsed.industries || [],
     tools: parsed.tools || [],
+    education: parsed.education || [],
   };
 }
 
@@ -51,6 +59,7 @@ export async function evaluateJob(
     seniorityLevel: string;
     industries: string[];
     tools: string[];
+    education: any[];
   }
 ): Promise<{
   title: string;
@@ -79,6 +88,7 @@ Seniority: ${resumeData.seniorityLevel}
 Industries: ${resumeData.industries.join(", ")}
 Tools: ${resumeData.tools.join(", ")}
 Experience: ${JSON.stringify(resumeData.experience)}
+Education: ${JSON.stringify(resumeData.education)}
 
 Evaluate the job description against this resume. Be direct, evidence-based, and do not sugarcoat.
 
