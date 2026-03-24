@@ -160,11 +160,14 @@ export async function registerRoutes(
     try {
       const userId = req.session.userId as string;
       const id = parseInt(req.params.id);
-      const { status, applied, appliedDate, notes, jobUrl } = req.body;
+      const { status, applied, appliedDate, interviewDate, offerDate, rejectedDate, notes, jobUrl } = req.body;
       const updates: any = {};
       if (status !== undefined) updates.status = status;
       if (applied !== undefined) updates.applied = applied;
       if (appliedDate !== undefined) updates.appliedDate = appliedDate;
+      if (interviewDate !== undefined) updates.interviewDate = interviewDate;
+      if (offerDate !== undefined) updates.offerDate = offerDate;
+      if (rejectedDate !== undefined) updates.rejectedDate = rejectedDate;
       if (notes !== undefined) updates.notes = notes;
       if (jobUrl !== undefined) updates.jobUrl = jobUrl;
 

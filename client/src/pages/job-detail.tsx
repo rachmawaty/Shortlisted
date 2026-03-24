@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -44,6 +46,10 @@ import {
   Trash2,
   MapPin,
   Globe,
+  Send,
+  MessageSquare,
+  Gift,
+  Ban,
 } from "lucide-react";
 import type { Job } from "@shared/schema";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -63,6 +69,13 @@ export default function JobDetailPage() {
   const jobId = parseInt(params.id || "0");
   const [notes, setNotes] = useState("");
   const [notesDirty, setNotesDirty] = useState(false);
+  const [timeline, setTimeline] = useState({
+    appliedDate: "",
+    interviewDate: "",
+    offerDate: "",
+    rejectedDate: "",
+  });
+  const [timelineDirty, setTimelineDirty] = useState(false);
 
   const { data: job, isLoading } = useQuery<Job>({
     queryKey: ["/api/jobs", jobId],
@@ -72,6 +85,13 @@ export default function JobDetailPage() {
     if (job) {
       setNotes(job.notes || "");
       setNotesDirty(false);
+      setTimeline({
+        appliedDate: job.appliedDate || "",
+        interviewDate: (job as any).interviewDate || "",
+        offerDate: (job as any).offerDate || "",
+        rejectedDate: (job as any).rejectedDate || "",
+      });
+      setTimelineDirty(false);
     }
   }, [job]);
 
@@ -101,15 +121,24 @@ export default function JobDetailPage() {
 
   const handleStatusChange = (newStatus: string) => {
     if (!job) return;
+    const today = new Date().toISOString().split("T")[0];
     const isApplying = newStatus === "Applied" && !job.applied;
-    updateMutation.mutate({
+    const isInterviewing = newStatus === "Interview" && !timeline.interviewDate;
+    const isOffer = newStatus === "Offer" && !timeline.offerDate;
+    const isRejected = newStatus === "Rejected" && !timeline.rejectedDate;
+    const patch: Record<string, unknown> = {
       status: newStatus,
       applied: isApplying ? true : job.applied,
-      appliedDate: isApplying ? new Date().toISOString().split("T")[0] : job.appliedDate ?? undefined,
-    });
-    if (isApplying) {
-      toast({ title: "Marked as Applied" });
-    }
+      appliedDate: isApplying ? today : job.appliedDate ?? undefined,
+    };
+    if (isInterviewing) patch.interviewDate = today;
+    if (isOffer) patch.offerDate = today;
+    if (isRejected) patch.rejectedDate = today;
+    updateMutation.mutate(patch);
+    if (isApplying) toast({ title: "Marked as Applied" });
+    if (isInterviewing) setTimeline(prev => ({ ...prev, interviewDate: today }));
+    if (isOffer) setTimeline(prev => ({ ...prev, offerDate: today }));
+    if (isRejected) setTimeline(prev => ({ ...prev, rejectedDate: today }));
   };
 
   const handleSaveNotes = () => {
@@ -117,6 +146,22 @@ export default function JobDetailPage() {
       onSuccess: () => {
         setNotesDirty(false);
         toast({ title: "Notes saved" });
+        queryClient.invalidateQueries({ queryKey: ["/api/jobs", jobId] });
+        queryClient.invalidateQueries({ queryKey: ["/api/jobs"] });
+      },
+    });
+  };
+
+  const handleSaveTimeline = () => {
+    updateMutation.mutate({
+      appliedDate: timeline.appliedDate || null,
+      interviewDate: timeline.interviewDate || null,
+      offerDate: timeline.offerDate || null,
+      rejectedDate: timeline.rejectedDate || null,
+    }, {
+      onSuccess: () => {
+        setTimelineDirty(false);
+        toast({ title: "Timeline saved" });
         queryClient.invalidateQueries({ queryKey: ["/api/jobs", jobId] });
         queryClient.invalidateQueries({ queryKey: ["/api/jobs"] });
       },
@@ -295,6 +340,78 @@ export default function JobDetailPage() {
           </div>
         </Card>
       </div>
+
+      <Card className="p-5 space-y-4">
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-muted-foreground" />
+            <h3 className="text-sm font-semibold">Application Timeline</h3>
+          </div>
+          {timelineDirty && (
+            <Button size="sm" onClick={handleSaveTimeline} disabled={updateMutation.isPending} data-testid="button-save-timeline">
+              <Save className="w-4 h-4 mr-1" />
+              Save
+            </Button>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {[
+            { key: "appliedDate", label: "Applied", icon: Send, color: "text-blue-500" },
+            { key: "interviewDate", label: "Interview", icon: MessageSquare, color: "text-yellow-500" },
+            { key: "offerDate", label: "Offer Received", icon: Gift, color: "text-green-500" },
+            { key: "rejectedDate", label: "Rejected", icon: Ban, color: "text-destructive" },
+          ].map(({ key, label, icon: Icon, color }) => (
+            <div key={key} className="flex items-start gap-3">
+              <div className={`mt-6 ${color}`}>
+                <Icon className="w-4 h-4" />
+              </div>
+              <div className="flex-1 space-y-1">
+                <Label className="text-xs text-muted-foreground">{label}</Label>
+                <Input
+                  type="date"
+                  value={timeline[key as keyof typeof timeline]}
+                  onChange={(e) => {
+                    setTimeline(prev => ({ ...prev, [key]: e.target.value }));
+                    setTimelineDirty(true);
+                  }}
+                  className="text-sm"
+                  data-testid={`input-date-${key}`}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {(timeline.appliedDate || timeline.interviewDate || timeline.offerDate || timeline.rejectedDate) && (
+          <>
+            <Separator />
+            <div className="flex items-center gap-0 overflow-x-auto pb-1">
+              {[
+                { key: "appliedDate", label: "Applied", icon: Send, color: "bg-blue-500" },
+                { key: "interviewDate", label: "Interview", icon: MessageSquare, color: "bg-yellow-500" },
+                { key: "offerDate", label: "Offer", icon: Gift, color: "bg-green-500" },
+                { key: "rejectedDate", label: "Rejected", icon: Ban, color: "bg-destructive" },
+              ].filter(({ key }) => timeline[key as keyof typeof timeline]).map(({ key, label, icon: Icon, color }, i, arr) => (
+                <div key={key} className="flex items-center shrink-0">
+                  <div className="flex flex-col items-center gap-1">
+                    <div className={`w-8 h-8 rounded-full ${color} flex items-center justify-center`}>
+                      <Icon className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-xs font-medium">{label}</span>
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">
+                      {new Date(timeline[key as keyof typeof timeline]).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                    </span>
+                  </div>
+                  {i < arr.length - 1 && (
+                    <div className="w-12 h-px bg-border mx-1 mb-5" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </Card>
 
       {needsFollow && (
         <Card className="p-4 border-destructive/30 bg-destructive/5">
